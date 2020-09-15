@@ -9,8 +9,15 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+
+    <!-- Strings related to SelectEnv activity -->
     <string name="goto_t6">"Goto t6"</string>
     <string name="goto_t13">"Goto t13"</string>
     <string name="logged_in_as">Logged In As</string>
+
+    <!-- Strings related to SpecificEnv activity -->
+    <string name="working">working: %1d</string>
+    <string name="workingwithDep">workingwithDep: %1d</string>
+    <string name="workingwithHugeDep">workingwithHugeDep: %1d</string>
 
 </resources>

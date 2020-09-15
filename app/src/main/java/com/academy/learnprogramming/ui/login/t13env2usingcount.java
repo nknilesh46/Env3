@@ -1,5 +1,6 @@
 package com.academy.learnprogramming.ui.login;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -34,6 +35,7 @@ public class t13env2usingcount extends AppCompatActivity {
 
     boolean dataReceived = false;
     boolean loadingdata = true;
+
     Switch sw1, sw2, sw3;
 
     private boolean isNetworkConnected() {
@@ -45,6 +47,7 @@ public class t13env2usingcount extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), t13env2usingcount.class);
         startActivity(intent);
     }
+
 
 
     @Override
@@ -62,7 +65,7 @@ public class t13env2usingcount extends AppCompatActivity {
                 if(sw1.getTag() != null)
                     return;
 
-                if (isNetworkConnected() && dataReceived && loadingdata == false ) {
+                if (isNetworkConnected() && dataReceived && !loadingdata ) {
                     if (isChecked) {
                         // The toggle is enabled
                         sw2.setClickable(false);
@@ -87,7 +90,7 @@ public class t13env2usingcount extends AppCompatActivity {
                 if(sw2.getTag() != null)
                     return;
 
-                if (isNetworkConnected() && dataReceived && loadingdata == false ) {
+                if (isNetworkConnected() && dataReceived && !loadingdata ) {
                     if (isChecked) {
                         // The toggle is enabled
                         sw1.setClickable(false);
@@ -113,7 +116,7 @@ public class t13env2usingcount extends AppCompatActivity {
                 if(sw3.getTag() != null)
                     return;
 
-                if (isNetworkConnected() && dataReceived && loadingdata == false ) {
+                if (isNetworkConnected() && dataReceived && !loadingdata ) {
                     if (isChecked) {
                         // The toggle is enabled
                         sw1.setClickable(false);
@@ -149,7 +152,7 @@ public class t13env2usingcount extends AppCompatActivity {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    if(isNetworkConnected()==false){dataReceived=false;finish();}
+                    if(!isNetworkConnected()){dataReceived=false;finish();}
                 }
             }
         }).start();
@@ -173,9 +176,9 @@ public class t13env2usingcount extends AppCompatActivity {
 
                 //Increment counter values from each user's UID
                 for (DataSnapshot insideUID: snapshot.child("Users").getChildren()) {
-                    if(insideUID.child("working").getValue(Boolean.class)==true){workingCtr++;}
-                    if(insideUID.child("workingwithDep").getValue(Boolean.class)==true){workingwithDepCtr++;}
-                    if(insideUID.child("workingwithHugeDep").getValue(Boolean.class)==true){workingwithHugeDepCtr++;}
+                    if(insideUID.child("working").getValue(Boolean.class)){workingCtr++;}
+                    if(insideUID.child("workingwithDep").getValue(Boolean.class)){workingwithDepCtr++;}
+                    if(insideUID.child("workingwithHugeDep").getValue(Boolean.class)){workingwithHugeDepCtr++;}
 
                 }
 
@@ -185,9 +188,10 @@ public class t13env2usingcount extends AppCompatActivity {
                 dbRef.child("workingwithHugeDep").setValue(workingwithHugeDepCtr);
 
                 //Updating textViews with counter values
-                working.setText("working: "+workingCtr);
-                workingwithDep.setText("workingwithDep: "+workingwithDepCtr);
-                workingwithHugeDep.setText("workingwithHugeDep: "+workingwithHugeDepCtr);
+                //working.setText("working: "+workingCtr);
+                working.setText(getString(R.string.working, workingCtr));
+                workingwithDep.setText(getString(R.string.workingwithDep, workingwithDepCtr));
+                workingwithHugeDep.setText(getString(R.string.workingwithHugeDep, workingwithHugeDepCtr));
 
                 dataReceived = true;
             }
@@ -209,12 +213,12 @@ public class t13env2usingcount extends AppCompatActivity {
                 sw1 = findViewById(R.id.switch1);
                 sw2 = findViewById(R.id.switch2);
                 sw3 = findViewById(R.id.switch3);
-                Switch sw[] = {sw1,sw2,sw3};
+                Switch[] sw = {sw1,sw2,sw3};
 
                 Boolean x1 = dataSnapshot.child("Users").child(user.getUid()).child("working").getValue(Boolean.class);
                 Boolean x2 = dataSnapshot.child("Users").child(user.getUid()).child("workingwithDep").getValue(Boolean.class);
                 Boolean x3 = dataSnapshot.child("Users").child(user.getUid()).child("workingwithHugeDep").getValue(Boolean.class);
-                Boolean bool[] = {x1,x2,x3};
+                Boolean[] bool = {x1,x2,x3};
 
                 for (int i=0; i<3 ; i++){
 //                    if(bool[i]){ sw[i].setTag("ignore");sw[i].setChecked(true);sw[i].setTag(null); }
