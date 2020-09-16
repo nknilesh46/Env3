@@ -1,11 +1,12 @@
 package com.academy.learnprogramming.ui.login;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.net.Uri;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.academy.learnprogramming.R;
+import com.academy.learnprogramming.data.model.UserNaNo;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -23,6 +25,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class t13env2usingcount extends AppCompatActivity {
 
@@ -33,10 +37,16 @@ public class t13env2usingcount extends AppCompatActivity {
     int workingwithDepCtr = 0;
     int workingwithHugeDepCtr =0;
 
+
+    ArrayList<UserNaNo> w_UserList = new ArrayList<>();
+    ArrayList<UserNaNo> wd_UserList = new ArrayList<>();
+    ArrayList<UserNaNo> whd_UserList = new ArrayList<>();
+
     boolean dataReceived = false;
     boolean loadingdata = true;
 
     Switch sw1, sw2, sw3;
+
 
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -44,10 +54,25 @@ public class t13env2usingcount extends AppCompatActivity {
     }
 
     public void workingOnclick(View view) {
-        Intent intent = new Intent(getApplicationContext(), t13env2usingcount.class);
+
+        Intent intent = new Intent(t13env2usingcount.this, activeUsers.class);
+        intent.putExtra("FILES_TO_SEND", w_UserList);
         startActivity(intent);
     }
 
+    public void workingwithDepOnclick(View view) {
+
+        Intent intent = new Intent(t13env2usingcount.this, activeUsers.class);
+        intent.putExtra("FILES_TO_SEND", wd_UserList);
+        startActivity(intent);
+    }
+
+    public void workingwithHugeDepOnclick(View view) {
+
+            Intent intent = new Intent(t13env2usingcount.this, activeUsers.class);
+            intent.putExtra("FILES_TO_SEND", whd_UserList);
+            startActivity(intent);
+    }
 
 
     @Override
@@ -152,6 +177,7 @@ public class t13env2usingcount extends AppCompatActivity {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                    //Close activity immediately when internet connection turned off
                     if(!isNetworkConnected()){dataReceived=false;finish();}
                 }
             }
@@ -170,15 +196,36 @@ public class t13env2usingcount extends AppCompatActivity {
                 workingwithDepCtr=0;
                 workingwithHugeDepCtr=0;
 
+                //Resetting active user list everytime on data change
+                w_UserList.clear();
+                wd_UserList.clear();
+                whd_UserList.clear();
+
                 TextView working = findViewById(R.id.working);
                 TextView workingwithDep = findViewById(R.id.workingwithDep);
                 TextView workingwithHugeDep = findViewById(R.id.workingwithHugeDep);
 
+
                 //Increment counter values from each user's UID
+                //Adding active users Name&Number to the list
                 for (DataSnapshot insideUID: snapshot.child("Users").getChildren()) {
-                    if(insideUID.child("working").getValue(Boolean.class)){workingCtr++;}
-                    if(insideUID.child("workingwithDep").getValue(Boolean.class)){workingwithDepCtr++;}
-                    if(insideUID.child("workingwithHugeDep").getValue(Boolean.class)){workingwithHugeDepCtr++;}
+                    if(insideUID.child("working").getValue(Boolean.class)){
+                        workingCtr++;
+//                        workingUserList.add(insideUID.getValue(UserDetails.class));
+                        w_UserList.add(new UserNaNo(insideUID.child("number").getValue().toString(),insideUID.child("userName").getValue().toString()));
+                    }
+                    if(insideUID.child("workingwithDep").getValue(Boolean.class)){
+                        workingwithDepCtr++;
+//                        workingwithDepUserDetails.add(insideUID.getValue(UserDetails.class));
+                        wd_UserList.add(new UserNaNo(insideUID.child("number").getValue().toString(),insideUID.child("userName").getValue().toString()));
+
+                    }
+                    if(insideUID.child("workingwithHugeDep").getValue(Boolean.class)){
+                        workingwithHugeDepCtr++;
+//                        workingwithHugeDepUserDetails.add(insideUID.getValue(UserDetails.class));
+                        whd_UserList.add(new UserNaNo(insideUID.child("number").getValue().toString(),insideUID.child("userName").getValue().toString()));
+
+                    }
 
                 }
 
@@ -188,7 +235,6 @@ public class t13env2usingcount extends AppCompatActivity {
                 dbRef.child("workingwithHugeDep").setValue(workingwithHugeDepCtr);
 
                 //Updating textViews with counter values
-                //working.setText("working: "+workingCtr);
                 working.setText(getString(R.string.working, workingCtr));
                 workingwithDep.setText(getString(R.string.workingwithDep, workingwithDepCtr));
                 workingwithHugeDep.setText(getString(R.string.workingwithHugeDep, workingwithHugeDepCtr));

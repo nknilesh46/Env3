@@ -1,8 +1,10 @@
 package com.academy.learnprogramming.ui.login;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -12,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.academy.learnprogramming.R;
+import com.academy.learnprogramming.data.model.UserNaNo;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -20,14 +23,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 public class t6env2 extends AppCompatActivity {
 
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private DatabaseReference dbRef;
 
-   int readWorking = 0;
+    int readWorking = 0;
     int readWorkingwithDep = 0;
     int readWorkingwithHugeDep =0;
+
+    ArrayList<UserNaNo> w_UserList = new ArrayList<>();
+    ArrayList<UserNaNo> wd_UserList = new ArrayList<>();
+    ArrayList<UserNaNo> whd_UserList = new ArrayList<>();
 
     boolean dataReceived = false;
     boolean loadingdata = true;
@@ -37,6 +46,27 @@ public class t6env2 extends AppCompatActivity {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
         return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
+    }
+
+    public void workingOnclick(View view) {
+
+        Intent intent = new Intent(t6env2.this, activeUsers.class);
+        intent.putExtra("FILES_TO_SEND", w_UserList);
+        startActivity(intent);
+    }
+
+    public void workingwithDepOnclick(View view) {
+
+        Intent intent = new Intent(t6env2.this, activeUsers.class);
+        intent.putExtra("FILES_TO_SEND", wd_UserList);
+        startActivity(intent);
+    }
+
+    public void workingwithHugeDepOnclick(View view) {
+
+        Intent intent = new Intent(t6env2.this, activeUsers.class);
+        intent.putExtra("FILES_TO_SEND", whd_UserList);
+        startActivity(intent);
     }
 
 
@@ -54,7 +84,7 @@ public class t6env2 extends AppCompatActivity {
                 if(sw1.getTag() != null)
                     return;
 
-                if (isNetworkConnected() && dataReceived && loadingdata == false ) {
+                if (isNetworkConnected() && dataReceived && !loadingdata) {
                     if (isChecked) {
                         // The toggle is enabled
                         sw2.setClickable(false);
@@ -81,7 +111,7 @@ public class t6env2 extends AppCompatActivity {
                 if(sw2.getTag() != null)
                     return;
 
-                if (isNetworkConnected() && dataReceived && loadingdata == false ) {
+                if (isNetworkConnected() && dataReceived && !loadingdata) {
                     if (isChecked) {
                         // The toggle is enabled
                         sw1.setClickable(false);
@@ -108,7 +138,7 @@ public class t6env2 extends AppCompatActivity {
                 if(sw3.getTag() != null)
                     return;
 
-                if (isNetworkConnected() && dataReceived && loadingdata == false ) {
+                if (isNetworkConnected() && dataReceived && !loadingdata) {
                     if (isChecked) {
                         // The toggle is enabled
                         sw1.setClickable(false);
@@ -146,7 +176,7 @@ public class t6env2 extends AppCompatActivity {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    if(isNetworkConnected()==false){dataReceived=false;}
+                    if(!isNetworkConnected()){dataReceived=false;}
                 }
             }
         }).start();
@@ -193,12 +223,12 @@ public class t6env2 extends AppCompatActivity {
                 sw1 = findViewById(R.id.switch1);
                 sw2 = findViewById(R.id.switch2);
                 sw3 = findViewById(R.id.switch3);
-                Switch sw[] = {sw1,sw2,sw3};
+                Switch[] sw = {sw1,sw2,sw3};
 
                 Boolean x1 = dataSnapshot.child("Users").child(user.getUid()).child("working").getValue(Boolean.class);
                 Boolean x2 = dataSnapshot.child("Users").child(user.getUid()).child("workingwithDep").getValue(Boolean.class);
                 Boolean x3 = dataSnapshot.child("Users").child(user.getUid()).child("workingwithHugeDep").getValue(Boolean.class);
-                Boolean bool[] = {x1,x2,x3};
+                Boolean[] bool = {x1,x2,x3};
 
                 for (int i=0; i<3 ; i++){
                     if(bool[i]){ sw[i].setTag("ignore");sw[i].setChecked(true);sw[i].setTag(null); }

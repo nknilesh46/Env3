@@ -21,6 +21,7 @@
         <activity android:name=".ui.login.SelectEnv" />
         <activity android:name=".ui.login.t6env" />
         <activity android:name=".ui.login.t6env2" />
+        <activity android:name=".ui.login.activeUsers" />
 
         <activity android:name=".ui.login.t13env" />
         <activity android:name=".ui.login.t13env2" />
