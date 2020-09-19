@@ -26,12 +26,10 @@ public class activeUsers extends AppCompatActivity {
 
         final ArrayList<UserNaNo> toDisplayList =  (ArrayList<UserNaNo>)getIntent().getSerializableExtra("FILES_TO_SEND");
         if(toDisplayList.size()<1){finish();}
+        final int color = (Integer) getIntent().getSerializableExtra("COLOR");
 
-//        for(UserNaNo t : toDisplayList){
-//            Toast.makeText(getApplicationContext()," "+t.getNumber()+" "+t.getUserName(), Toast.LENGTH_SHORT).show();
-//        }
 
-        WordAdapter adapter = new WordAdapter(this, toDisplayList, R.color.category_numbers);
+        WordAdapter adapter = new WordAdapter(this, toDisplayList, color);
 
         // Find the {@link ListView} object in the view hierarchy of the {@link Activity}.
         // There should be a {@link ListView} with the view ID called list, which is declared in the
@@ -56,8 +54,5 @@ public class activeUsers extends AppCompatActivity {
         });
     }
 
-    public void userOnclick(View view) {
-
-    }
 
 }

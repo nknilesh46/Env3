@@ -80,6 +80,13 @@ public class WordAdapter extends ArrayAdapter<UserNaNo> {
 //        if (currentWord.hasImage()) {
 //            // If an image is available, display the provided image based on the resource ID
 //            imageView.setImageResource(currentWord.getImageResourceId());
+              switch(mColorResourceId){
+                  case 1: imageView.setImageResource(R.drawable.funny_green); break;
+                  case 2: imageView.setImageResource(R.drawable.funny_orange); break;
+                  case 3: imageView.setImageResource(R.drawable.funny_red); break;
+
+              }
+
 //            // Make sure the view is visible
 //            imageView.setVisibility(View.VISIBLE);
 //        } else {
@@ -92,7 +99,7 @@ public class WordAdapter extends ArrayAdapter<UserNaNo> {
         // Find the color that the resource ID maps to
 //        int color = ContextCompat.getColor(getContext(), mColorResourceId);
         // Set the background color of the text container View
-        textContainer.setBackgroundColor(Color.DKGRAY);
+        textContainer.setBackgroundColor(Color.TRANSPARENT);
 
         // Return the whole list item layout (containing 2 TextViews) so that it can be shown in
         // the ListView.

@@ -31,6 +31,14 @@ public class UserDetails {
         this.workingwithHugeDep = workingwithHugeDep;
     }
 
+    public UserDetails(String number, String userName, Map<String, Boolean> obj) {
+        this.number = number;
+        this.userName = userName;
+        this.working = working;
+        this.workingwithDep = workingwithDep;
+        this.workingwithHugeDep = workingwithHugeDep;
+    }
+
     public void setNumber(String number) {
         this.number = number;
     }

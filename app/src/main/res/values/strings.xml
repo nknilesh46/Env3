@@ -1,9 +1,19 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Env</string>
+    <string name="sing_out">Sign Out</string>
+    <string name="admin_mode">Goto Admin Mode</string>
+
+
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
+    <string name="prompt_dispalyname">Display Name</string>
+    <string name="prompt_number">WhatsApp Number</string>
+
+
+    <string name="action_sign_in">Sign in or sign up</string>
+    <string name="action_sign_up">Submit</string>
+
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid username</string>
@@ -16,8 +26,8 @@
     <string name="logged_in_as">Logged In As</string>
 
     <!-- Strings related to SpecificEnv activity -->
-    <string name="working">working: %1d</string>
-    <string name="workingwithDep">workingwithDep: %1d</string>
-    <string name="workingwithHugeDep">workingwithHugeDep: %1d</string>
+    <string name="working">(A) working: %1d</string>
+    <string name="workingwithDep">(B) workingwithDep: %1d</string>
+    <string name="workingwithHugeDep">(C) workingwithHugeDep: %1d</string>
 
 </resources>

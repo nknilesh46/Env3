@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Parcelable;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class t13env2usingcount extends AppCompatActivity {
+public class EnvActivity extends AppCompatActivity {
 
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private DatabaseReference dbRef;
@@ -41,6 +42,8 @@ public class t13env2usingcount extends AppCompatActivity {
     ArrayList<UserNaNo> w_UserList = new ArrayList<>();
     ArrayList<UserNaNo> wd_UserList = new ArrayList<>();
     ArrayList<UserNaNo> whd_UserList = new ArrayList<>();
+
+
 
     boolean dataReceived = false;
     boolean loadingdata = true;
@@ -55,23 +58,30 @@ public class t13env2usingcount extends AppCompatActivity {
 
     public void workingOnclick(View view) {
 
-        Intent intent = new Intent(t13env2usingcount.this, activeUsers.class);
+        Intent intent = new Intent(this, activeUsers.class);
         intent.putExtra("FILES_TO_SEND", w_UserList);
+        intent.putExtra("COLOR", 1);
+
         startActivity(intent);
     }
 
     public void workingwithDepOnclick(View view) {
 
-        Intent intent = new Intent(t13env2usingcount.this, activeUsers.class);
+        Intent intent = new Intent(this, activeUsers.class);
         intent.putExtra("FILES_TO_SEND", wd_UserList);
+        intent.putExtra("COLOR", 2);
+
+
         startActivity(intent);
     }
 
     public void workingwithHugeDepOnclick(View view) {
 
-            Intent intent = new Intent(t13env2usingcount.this, activeUsers.class);
+            Intent intent = new Intent(this, activeUsers.class);
             intent.putExtra("FILES_TO_SEND", whd_UserList);
-            startActivity(intent);
+        intent.putExtra("COLOR", 3);
+
+        startActivity(intent);
     }
 
 
@@ -80,10 +90,17 @@ public class t13env2usingcount extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.env_page);
 
+
+
+
+        // final String SELECTED_ENV =  (String)getIntent().getSerializableExtra("SELECTED_ENV");
+
+        //Rotation locked to PORTRAIT
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         sw1 = findViewById(R.id.switch1);
         sw2 = findViewById(R.id.switch2);
         sw3 = findViewById(R.id.switch3);
+
 
         sw1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -93,14 +110,14 @@ public class t13env2usingcount extends AppCompatActivity {
                 if (isNetworkConnected() && dataReceived && !loadingdata ) {
                     if (isChecked) {
                         // The toggle is enabled
-                        sw2.setClickable(false);
-                        sw3.setClickable(false);
-                        dbRef.child("Users").child(user.getUid()).child("working").setValue(true);
+                        sw2.setClickable(false); sw2.setVisibility(View.INVISIBLE);
+                        sw3.setClickable(false); sw3.setVisibility(View.INVISIBLE);
+                        dbRef.child("Users/"+user.getUid()+"/boolValues/w").setValue(true);
                     } else {
                         // The toggle is disabled
-                        sw2.setClickable(true);
-                        sw3.setClickable(true);
-                        dbRef.child("Users").child(user.getUid()).child("working").setValue(false);
+                        sw2.setClickable(true); sw2.setVisibility(View.VISIBLE);
+                        sw3.setClickable(true); sw3.setVisibility(View.VISIBLE);
+                        dbRef.child("Users/"+user.getUid()+"/boolValues/w").setValue(false);
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), "Loading...", Toast.LENGTH_SHORT).show();
@@ -118,14 +135,14 @@ public class t13env2usingcount extends AppCompatActivity {
                 if (isNetworkConnected() && dataReceived && !loadingdata ) {
                     if (isChecked) {
                         // The toggle is enabled
-                        sw1.setClickable(false);
-                        sw3.setClickable(false);
-                        dbRef.child("Users").child(user.getUid()).child("workingwithDep").setValue(true);
+                        sw1.setClickable(false); sw1.setVisibility(View.INVISIBLE);
+                        sw3.setClickable(false); sw3.setVisibility(View.INVISIBLE);
+                        dbRef.child("Users/"+user.getUid()+"/boolValues/wd").setValue(true);
                     } else {
                         // The toggle is disabled
-                        sw1.setClickable(true);
-                        sw3.setClickable(true);
-                        dbRef.child("Users").child(user.getUid()).child("workingwithDep").setValue(false);
+                        sw1.setClickable(true); sw1.setVisibility(View.VISIBLE);
+                        sw3.setClickable(true); sw3.setVisibility(View.VISIBLE);
+                        dbRef.child("Users/"+user.getUid()+"/boolValues/wd").setValue(false);
 
                     }
                 } else {
@@ -144,14 +161,14 @@ public class t13env2usingcount extends AppCompatActivity {
                 if (isNetworkConnected() && dataReceived && !loadingdata ) {
                     if (isChecked) {
                         // The toggle is enabled
-                        sw1.setClickable(false);
-                        sw2.setClickable(false);
-                        dbRef.child("Users").child(user.getUid()).child("workingwithHugeDep").setValue(true);
+                        sw1.setClickable(false); sw1.setVisibility(View.INVISIBLE);
+                        sw2.setClickable(false); sw2.setVisibility(View.INVISIBLE);
+                        dbRef.child("Users/"+user.getUid()+"/boolValues/whd").setValue(true);
                     } else {
                         // The toggle is disabled
-                        sw1.setClickable(true);
-                        sw2.setClickable(true);
-                        dbRef.child("Users").child(user.getUid()).child("workingwithHugeDep").setValue(false);
+                        sw1.setClickable(true); sw1.setVisibility(View.VISIBLE);
+                        sw2.setClickable(true); sw2.setVisibility(View.VISIBLE);
+                        dbRef.child("Users/"+user.getUid()+"/boolValues/whd").setValue(false);
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), "Loading...", Toast.LENGTH_SHORT).show();
@@ -168,6 +185,12 @@ public class t13env2usingcount extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
+        final ProgressBar loadingProgressBar = findViewById(R.id.loading);
+
+        final String SELECTED_ENV =  (String)getIntent().getSerializableExtra("SELECTED_ENV");
+        getSupportActionBar().setTitle(SELECTED_ENV);
+
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -183,7 +206,8 @@ public class t13env2usingcount extends AppCompatActivity {
             }
         }).start();
 
-        dbRef = FirebaseDatabase.getInstance().getReference().child("t13");
+        dbRef = FirebaseDatabase.getInstance().getReference().child("BS").child(SELECTED_ENV);
+
 
 
         ValueEventListener nonstoplistner = new ValueEventListener() {
@@ -208,31 +232,37 @@ public class t13env2usingcount extends AppCompatActivity {
 
                 //Increment counter values from each user's UID
                 //Adding active users Name&Number to the list
-                for (DataSnapshot insideUID: snapshot.child("Users").getChildren()) {
-                    if(insideUID.child("working").getValue(Boolean.class)){
-                        workingCtr++;
+                    for (DataSnapshot insideUID : snapshot.child("Users").getChildren()) {
+
+                        try {
+                            if (insideUID.child("/boolValues/w").getValue(Boolean.class)) {
+                                workingCtr++;
 //                        workingUserList.add(insideUID.getValue(UserDetails.class));
-                        w_UserList.add(new UserNaNo(insideUID.child("number").getValue().toString(),insideUID.child("userName").getValue().toString()));
-                    }
-                    if(insideUID.child("workingwithDep").getValue(Boolean.class)){
-                        workingwithDepCtr++;
+                                w_UserList.add(new UserNaNo(insideUID.child("number").getValue().toString(), insideUID.child("userName").getValue().toString()));
+                            }
+                            if (insideUID.child("/boolValues/wd").getValue(Boolean.class)) {
+                                workingwithDepCtr++;
 //                        workingwithDepUserDetails.add(insideUID.getValue(UserDetails.class));
-                        wd_UserList.add(new UserNaNo(insideUID.child("number").getValue().toString(),insideUID.child("userName").getValue().toString()));
+                                wd_UserList.add(new UserNaNo(insideUID.child("number").getValue().toString(), insideUID.child("userName").getValue().toString()));
 
-                    }
-                    if(insideUID.child("workingwithHugeDep").getValue(Boolean.class)){
-                        workingwithHugeDepCtr++;
+                            }
+                            if (insideUID.child("/boolValues/whd").getValue(Boolean.class)) {
+                                workingwithHugeDepCtr++;
 //                        workingwithHugeDepUserDetails.add(insideUID.getValue(UserDetails.class));
-                        whd_UserList.add(new UserNaNo(insideUID.child("number").getValue().toString(),insideUID.child("userName").getValue().toString()));
+                                whd_UserList.add(new UserNaNo(insideUID.child("number").getValue().toString(), insideUID.child("userName").getValue().toString()));
+
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
                     }
 
-                }
 
                 //Updating Firebase DB with counter values (can only be viewed in DB)
-                dbRef.child("working").setValue(workingCtr);
-                dbRef.child("workingwithDep").setValue(workingwithDepCtr);
-                dbRef.child("workingwithHugeDep").setValue(workingwithHugeDepCtr);
+                dbRef.child("w").setValue(workingCtr);
+                dbRef.child("wd").setValue(workingwithDepCtr);
+                dbRef.child("whd").setValue(workingwithHugeDepCtr);
 
                 //Updating textViews with counter values
                 working.setText(getString(R.string.working, workingCtr));
@@ -261,24 +291,35 @@ public class t13env2usingcount extends AppCompatActivity {
                 sw3 = findViewById(R.id.switch3);
                 Switch[] sw = {sw1,sw2,sw3};
 
-                Boolean x1 = dataSnapshot.child("Users").child(user.getUid()).child("working").getValue(Boolean.class);
-                Boolean x2 = dataSnapshot.child("Users").child(user.getUid()).child("workingwithDep").getValue(Boolean.class);
-                Boolean x3 = dataSnapshot.child("Users").child(user.getUid()).child("workingwithHugeDep").getValue(Boolean.class);
+                Boolean x1 = dataSnapshot.child("Users/"+user.getUid()+"/boolValues/w").getValue(Boolean.class);
+                Boolean x2 = dataSnapshot.child("Users/"+user.getUid()+"/boolValues/wd").getValue(Boolean.class);
+                Boolean x3 = dataSnapshot.child("Users/"+user.getUid()+"/boolValues/whd").getValue(Boolean.class);
                 Boolean[] bool = {x1,x2,x3};
 
-                for (int i=0; i<3 ; i++){
+                try {
+                    for (int i = 0; i < 3; i++) {
 //                    if(bool[i]){ sw[i].setTag("ignore");sw[i].setChecked(true);sw[i].setTag(null); }
 //                    else { sw[i].setTag("ignore");sw[i].setChecked(false);sw[i].setTag(null); }
-                    if(bool[i]){ sw[i].setChecked(true); }
-                    else { sw[i].setChecked(false); }
+                        if (bool[i]) {
+                            sw[i].setChecked(true);
+                        } else {
+                            sw[i].setChecked(false);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+                loadingProgressBar.setVisibility(View.GONE);
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 // Log.e(TAG,"Error while reading data");
             }
+
         });
+
 
 
     }

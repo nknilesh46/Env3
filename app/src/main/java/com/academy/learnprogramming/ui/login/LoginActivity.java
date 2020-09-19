@@ -26,26 +26,31 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.academy.learnprogramming.R;
-import com.academy.learnprogramming.ui.login.LoginViewModel;
-import com.academy.learnprogramming.ui.login.LoginViewModelFactory;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserInfo;
-import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
     private FirebaseAuth mAuth;
+    private DatabaseReference dbRef;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         mAuth = FirebaseAuth.getInstance();
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.login_page);
+
+        dbRef = FirebaseDatabase.getInstance().getReference();
+
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
@@ -132,22 +137,83 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (!task.isSuccessful()) {
-                                    // there was an error
-                                    Toast.makeText(LoginActivity.this, "Authentication failed." + task.getException(),
-                                            Toast.LENGTH_LONG).show();
+                                    //Some issue
                                     Log.e("MyTag", task.getException().toString());
+                                    try {
+                                        throw task.getException();
+                                    } catch(FirebaseAuthInvalidUserException e) {
+                                        // Register new account
+                                        signUp(usernameEditText.getText().toString(), passwordEditText.getText().toString());
+//                                        plzCompleteSignup(usernameEditText.getText().toString(),passwordEditText.getText().toString());
+//                                        finish();
+
+                                    } catch(FirebaseAuthInvalidCredentialsException e) {
+                                        loadingProgressBar.setVisibility(View.GONE);
+                                        Toast.makeText(LoginActivity.this, "Wrong Password!",Toast.LENGTH_SHORT).show();
+
+                                    }  catch(Exception e) {
+//                                        Log.e(TAG, e.getMessage());
+                                    }
 
                                 } else {
                                     //Intent intent = new Intent(LoginActivity.this, SignedInActivity.class)
-                                    Intent intent = new Intent(getApplicationContext(), SelectEnv.class);
-                                    startActivity(intent);
-                                    finish();
+                                    if (mAuth.getCurrentUser().getDisplayName()==null) {
+                                        //Logged in but Activation not completed
+                                        loadingProgressBar.setVisibility(View.GONE);
+                                        Toast.makeText(LoginActivity.this, "Plz complete signup", Toast.LENGTH_SHORT).show();
+                                        plzCompleteSignup();
+                                        finish();
+
+                                    }
+                                    else {
+                                        //Logged in, Activation complete
+                                        //Happy path
+                                        Intent intent = new Intent(getApplicationContext(), SelectEnv.class);
+                                        startActivity(intent);
+                                        finish();
+
+                                    }
                                 }
                             }
+
                         });
+
+
+
             }
         });
     }
+
+    private void signUp(String toString, String toString1) {
+
+        mAuth.createUserWithEmailAndPassword(toString, toString1)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+//                            Log.d(TAG, "createUserWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Toast.makeText(getApplicationContext(), "Account created.",
+                                    Toast.LENGTH_SHORT).show();
+                            plzCompleteSignup();
+                            finish();
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+//                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            final ProgressBar loadingProgressBar = findViewById(R.id.loading);
+                            loadingProgressBar.setVisibility(View.GONE);
+                            Toast.makeText(getApplicationContext(), "Error creating account.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                        // ...
+                    }
+                });
+
+    }
+
 
     private void updateUiWithUser(LoggedInUserView model) {
         String welcome = getString(R.string.welcome) + model.getDisplayName();
@@ -168,16 +234,33 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        //updateUI(currentUser);
-      //  Intent intent = new Intent(getApplicationContext(), SelectEnv.class);
-      //  startActivity(intent);
-      //  finish();
-        if (mAuth.getCurrentUser() != null) {
-            // startActivity(new Intent(this, SignedInActivity.class));
 
-            startActivity(new Intent(this, SelectEnv.class));
-            finish();
+        if (mAuth.getCurrentUser() != null) {
+
+            if(mAuth.getCurrentUser().getDisplayName()==null || mAuth.getCurrentUser().getDisplayName().toString().equals("")){
+                Toast.makeText(LoginActivity.this, "Plz complete signup(Already loggedin)", Toast.LENGTH_SHORT).show();
+                plzCompleteSignup();
+                finish();
+            }
+
+            else {
+                startActivity(new Intent(this, SelectEnv.class));
+                finish();
+            }
         }
 
     }
+
+    private void plzCompleteSignup() {
+        Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+
+
+
+
+
+
 }

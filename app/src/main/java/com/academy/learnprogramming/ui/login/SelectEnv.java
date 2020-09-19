@@ -5,8 +5,9 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.academy.learnprogramming.R;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
 
@@ -32,7 +32,7 @@ public class SelectEnv extends AppCompatActivity  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.select_env2);
+        setContentView(R.layout.select_env);
         final TextView loggedInAs = findViewById(R.id.loggedInAs);
 
         loggedInAs.setText("Logged in as : "+user.getEmail());
@@ -55,32 +55,54 @@ public class SelectEnv extends AppCompatActivity  {
 
     }
 
-    public void onLogout(View view) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        FirebaseAuth.getInstance().signOut();
-        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-        startActivity(intent);
-        finish();
 
-    }
-
-    public void onT6env(View view) {
+    public void onT6envClick(View view) {
         if(isNetworkConnected()) {
-            startActivity(new Intent(this, t6env2.class));
+            Intent intent = new Intent(this, EnvActivity.class);
+            intent.putExtra("SELECTED_ENV","T6");
+            startActivity(intent);
+
         }
         else{
             Toast.makeText(getApplicationContext(), "Check network...", Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void onT13env(View view) {
+    public void onT13envClick(View view) {
         if(isNetworkConnected()) {
-            startActivity(new Intent(this, t13env2usingcount.class));
-        }
+            Intent intent = new Intent(this, EnvActivity.class);
+            intent.putExtra("SELECTED_ENV","T13");
+            startActivity(intent);        }
         else{
             Toast.makeText(getApplicationContext(), "Check network...", Toast.LENGTH_SHORT).show();
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_signout) {
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+            finish();
+            return true;
+        }
+        if (id == R.id.action_admin) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     }
